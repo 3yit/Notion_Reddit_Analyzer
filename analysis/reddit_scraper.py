@@ -127,6 +127,47 @@ class RedditScraper:
         print(f"\n📊 Total posts collected: {len(all_posts)}")
         return all_posts
     
+    def is_notion_relevant(self, post: Dict) -> bool:
+        """
+        Check if a post is actually about Notion (not just mentioning it in passing)
+        
+        Returns True if:
+        - Title contains "notion" OR
+        - Post is from r/Notion OR r/NotionSo OR
+        - Notion is mentioned multiple times (3+) in title+body
+        """
+        title_lower = post['title'].lower()
+        body_lower = post['selftext'].lower()
+        combined_text = f"{title_lower} {body_lower}"
+        
+        # Always include posts from Notion-specific subreddits
+        if post['subreddit'] in ['Notion', 'NotionSo']:
+            return True
+        
+        # Include if "notion" is in the title
+        if 'notion' in title_lower:
+            return True
+        
+        # Include if "notion" appears 3+ times (means it's a major topic)
+        notion_mentions = combined_text.count('notion')
+        if notion_mentions >= 3:
+            return True
+        
+        # Exclude posts where Notion is just mentioned in a list
+        # Common patterns: "notion, todoist, clickup" or "tried notion but"
+        if notion_mentions <= 2:
+            # Check if it's just in a list with other tools
+            tool_list_patterns = [
+                'notion,', ', notion', 'notion and', 'todoist', 'obsidian',
+                'trello', 'evernote', 'onenote', 'clickup', 'asana'
+            ]
+            if any(pattern in combined_text for pattern in tool_list_patterns):
+                # Only include if Notion gets substantial discussion (200+ chars about it)
+                if notion_mentions == 1 and len(combined_text) < 500:
+                    return False
+        
+        return notion_mentions > 0
+    
     def categorize_complaints(self, posts: List[Dict]) -> Dict:
         """
         Categorize posts into complaint types
@@ -140,6 +181,11 @@ class RedditScraper:
         --------
         Dict : Structured complaint data
         """
+        
+        # First filter for Notion relevance
+        relevant_posts = [post for post in posts if self.is_notion_relevant(post)]
+        
+        print(f"\n🔍 Filtered {len(posts)} posts down to {len(relevant_posts)} Notion-relevant posts")
         
         # Keywords for each category
         categories = {
@@ -156,7 +202,7 @@ class RedditScraper:
         categorized_posts = {category: [] for category in categories.keys()}
         categorized_posts['other'] = []
         
-        for post in posts:
+        for post in relevant_posts:
             # Combine title and body for keyword matching
             text = f"{post['title']} {post['selftext']}".lower()
             
@@ -173,9 +219,9 @@ class RedditScraper:
         
         # Create summary
         summary = {
-            'total_posts': len(posts),
+            'total_posts': len(relevant_posts),
             'by_category': {cat: len(posts_list) for cat, posts_list in categorized_posts.items() if len(posts_list) > 0},
-            'date_range': f"{min(post['date'] for post in posts)} to {max(post['date'] for post in posts)}" if posts else "No posts"
+            'date_range': f"{min(post['date'] for post in relevant_posts)} to {max(post['date'] for post in relevant_posts)}" if relevant_posts else "No posts"
         }
         
         return {

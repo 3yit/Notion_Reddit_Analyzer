@@ -68,14 +68,22 @@ python reddit_scraper.py
 
 ## Data Collection
 
-Uses PRAW (Python Reddit API Wrapper) to collect:
-- Full post content
+Uses PRAW (Python Reddit API Wrapper) to collect and filter Reddit posts:
+
+**Filtering Logic:**
+- Only includes posts **actually about Notion** (not just mentioning it in a list)
+- Posts from r/Notion and r/NotionSo are always included
+- Posts from other subreddits must have "Notion" in the title OR mention it 3+ times
+- Filters out generic productivity posts that briefly mention Notion alongside 10 other tools
+
+**Data collected:**
+- Full post content (word-for-word)
 - Metadata (score, comments, date)
-- Top comments
+- Top 5 comments per post
 - Clickable links to original posts
 
 **Subreddits searched:**
-r/Notion, r/productivity, r/studytips, r/digitalplanner
+r/Notion, r/productivity, r/studytips, r/digitalplanner, r/NotionSo, r/PKM
 
 ## Analysis Results
 
@@ -109,9 +117,18 @@ See `complaint_analysis.ipynb` for full analysis.
 - **Authentication**: Official Reddit API
 
 ### Categorization
-- **Method**: Keyword-based classification
+- **Method**: Two-stage filtering process
+  1. **Relevance Filter**: Removes posts that only mention Notion in passing (e.g., "I use Notion, Todoist, and 10 other apps")
+  2. **Keyword Classification**: Categorizes relevant posts into complaint types
 - **Categories**: Performance, mobile, onboarding, pricing, collaboration, features
 - **Validation**: Manual review of sample posts
+
+### Relevance Criteria
+A post is considered "about Notion" if it meets any of:
+- Posted in r/Notion or r/NotionSo
+- Has "Notion" in the title
+- Mentions "Notion" 3+ times (indicates substantial discussion)
+- Posts mentioning Notion once in a list with other tools are excluded
 
 ### Statistical Analysis
 - **Frequency Analysis**: Distribution across categories
@@ -123,9 +140,10 @@ See `complaint_analysis.ipynb` for full analysis.
 
 ### Limitations
 - Keyword matching may miss nuanced complaints
-- Reddit users may not represent all Notion users
-- Self-selection bias
+- Reddit users may not represent all Notion users (skews toward power users)
+- Self-selection bias (users with strong opinions more likely to post)
 - Cannot establish causality without experimental data
+- Relevance filtering may exclude some edge cases where Notion is discussed indirectly
 
 ## Output Files
 
