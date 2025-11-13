@@ -21,7 +21,7 @@ st.set_page_config(
 @st.cache_resource
 def get_db_connection():
     """Get database connection"""
-    db_path = Path(__file__).parent.parent / 'data' / 'notion_complaints.db'
+    db_path = Path(__file__).parent / 'data' / 'notion_complaints.db'
     return sqlite3.connect(db_path, check_same_thread=False)
 
 @st.cache_data
@@ -161,7 +161,7 @@ def main():
             hole=0.4
         )
         fig.update_traces(textposition='inside', textinfo='percent+label')
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
     
     with col2:
         st.subheader("Complaints Over Time")
@@ -178,7 +178,7 @@ def main():
             markers=True
         )
         fig.update_layout(xaxis_title="Date", yaxis_title="Number of Posts")
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
     
     # Row 2: Top posts and subreddit breakdown
     col1, col2 = st.columns(2)
@@ -212,7 +212,7 @@ def main():
             text='Posts'
         )
         fig.update_traces(texttemplate='%{text}', textposition='outside')
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
     
     # Row 3: Category trends and engagement heatmap
     st.subheader("Category Trends Over Time")
@@ -239,7 +239,7 @@ def main():
             color='Category',
             title='Complaint Categories Over Time (Stacked)'
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
     else:
         st.info("No category data available for selected filters")
     
@@ -268,7 +268,7 @@ def main():
         
         st.dataframe(
             display_df,
-            use_container_width=True,
+            width='stretch',
             hide_index=True
         )
     
