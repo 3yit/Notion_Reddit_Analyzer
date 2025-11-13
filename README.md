@@ -5,7 +5,8 @@ A data science tool that analyzes Reddit posts to identify product improvement o
 ## Overview
 
 **Current Dataset:**
-- 347 complaint posts from the past 30 days
+- 323 Notion-relevant posts from the past 30 days (93.1% of 347 scraped)
+- 24 generic productivity posts filtered out (6.9%)
 - Scraper can be configured for larger datasets (different time ranges, more subreddits)
 
 **Key Findings:**
@@ -13,17 +14,57 @@ A data science tool that analyzes Reddit posts to identify product improvement o
 - Performance issues: 11.8% of complaints
 - Designed A/B tests with power analysis and sample size calculations
 
+## Features
+
+### 📊 Interactive Dashboard
+- Real-time monitoring of complaint trends
+- Category breakdowns and time series visualizations
+- Filterable by subreddit, category, and date range
+- Top posts by engagement metrics
+
+**Run Dashboard:**
+```bash
+streamlit run dashboard.py
+```
+
+### 🗄️ SQL Database
+- Relational schema with posts, comments, categories, subreddits
+- Indexed for fast queries
+- Demonstrates JOIN operations and SQL proficiency
+- 0.86 MB SQLite database
+
+**Create Database:**
+```bash
+python analysis/create_database.py
+```
+
+### 📈 Time Series Analysis
+- Trend detection using linear regression
+- Week-over-week growth rates
+- Category-specific trend analysis
+- Anomaly detection for complaint spikes
+
+**Run Analysis:**
+```bash
+python analysis/time_series_analysis.py
+```
+
 ## Project Structure
 
 ```
 ├── analysis/
-│   ├── reddit_scraper.py          # PRAW API scraper
-│   ├── complaint_analysis.ipynb   # Jupyter analysis notebook
-│   └── statistical_analysis.py    # Statistical utilities
+│   ├── reddit_scraper.py            # PRAW API scraper with relevance filtering
+│   ├── create_database.py           # SQL database creation
+│   ├── time_series_analysis.py      # Trend and seasonality analysis
+│   ├── test_relevance_filter.py     # Filtering analysis tool
+│   ├── complaint_analysis.ipynb     # Jupyter analysis notebook
+│   └── statistical_analysis.py      # A/B test utilities
 ├── data/
-│   ├── reddit_posts_raw.json          # 347 posts with full content
-│   ├── reddit_posts_categorized.json  # Posts by category
-│   └── reddit_analysis_report.md      # Formatted report
+│   ├── reddit_posts_raw.json          # 347 scraped posts
+│   ├── reddit_posts_categorized.json  # 323 relevant posts by category
+│   ├── reddit_analysis_report.md      # Formatted report
+│   └── notion_complaints.db           # SQLite database
+├── dashboard.py                       # Streamlit dashboard
 ├── requirements.txt
 ├── run_scraper.sh
 ├── REDDIT_SETUP.md
@@ -144,23 +185,27 @@ A post is considered "about Notion" if it meets any of:
 - Self-selection bias (users with strong opinions more likely to post)
 - Cannot establish causality without experimental data
 - Relevance filtering may exclude some edge cases where Notion is discussed indirectly
+- Dataset size (323 posts) limits statistical power for some analyses
 
 ## Output Files
 
 After running the scraper:
 
-1. **reddit_posts_raw.json** - All 347 posts with complete data
-2. **reddit_posts_categorized.json** - Posts organized by type
+1. **reddit_posts_raw.json** - All 347 scraped posts (before filtering)
+2. **reddit_posts_categorized.json** - 323 Notion-relevant posts organized by type
 3. **reddit_analysis_report.md** - Formatted report with top 50 posts
+4. **notion_complaints.db** - SQLite database with relational schema
 
 All posts include clickable links to original sources for verification.
 
 ## Technologies
 
 - Python 3.9+
-- PRAW (Reddit API)
-- pandas, scipy
-- Jupyter
+- **Data Collection:** PRAW (Reddit API)
+- **Database:** SQLite with relational schema
+- **Analysis:** pandas, scipy, numpy
+- **Visualization:** Plotly, Streamlit
+- **Notebooks:** Jupyter
 
 ## Future Enhancements
 

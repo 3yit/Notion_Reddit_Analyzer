@@ -6,6 +6,10 @@
 **Time Period:** Last 30 days (October 11 - November 10, 2025)  
 **Method:** Reddit API via PRAW
 
+**Raw Data:** 347 posts scraped  
+**After Filtering:** 323 Notion-relevant posts (93.1%)  
+**Filtered Out:** 24 generic productivity posts (6.9%)
+
 ## Dataset Statistics
 
 ### Posts Collected
@@ -58,14 +62,16 @@ https://www.reddit.com/r/Notion/comments/1odxw00/
 
 ## Output Files
 
-1. **reddit_posts_raw.json** - All 347 posts with complete data
-2. **reddit_posts_categorized.json** - Posts organized by category
+1. **reddit_posts_raw.json** - All 347 scraped posts (before filtering)
+2. **reddit_posts_categorized.json** - 323 Notion-relevant posts organized by category
 3. **reddit_analysis_report.md** - Formatted report with top 50 posts
+4. **notion_complaints.db** - SQLite database (0.86 MB)
 
 ## Data Quality
 
 - 100% real data from Reddit API
 - Full source citations with clickable URLs
+- Relevance filtering removes generic productivity posts
 - Verifiable and reproducible
 - No synthetic or mock data
 
