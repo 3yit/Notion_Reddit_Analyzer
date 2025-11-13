@@ -149,6 +149,41 @@ def categorize_post(post_text):
     return matched_categories
 
 
+def is_notion_relevant(post):
+    """Check if post is actually about Notion (not just mentioning in passing)"""
+    
+    title_lower = post['title'].lower()
+    body_lower = post.get('selftext', '').lower()
+    combined_text = f"{title_lower} {body_lower}"
+    
+    # Always include posts from Notion-specific subreddits
+    if post['subreddit'] in ['Notion', 'NotionSo']:
+        return True
+    
+    # Include if "notion" is in the title
+    if 'notion' in title_lower:
+        return True
+    
+    # Include if "notion" appears 3+ times (means it's a major topic)
+    notion_mentions = combined_text.count('notion')
+    if notion_mentions >= 3:
+        return True
+    
+    # Exclude posts where Notion is just mentioned in a list
+    if notion_mentions <= 2:
+        # Check if it's just in a list with other tools
+        tool_list_patterns = [
+            'notion,', ', notion', 'notion and', 'todoist', 'obsidian',
+            'trello', 'evernote', 'onenote', 'clickup', 'asana'
+        ]
+        if any(pattern in combined_text for pattern in tool_list_patterns):
+            # Only include if Notion gets substantial discussion
+            if notion_mentions == 1 and len(combined_text) < 500:
+                return False
+    
+    return notion_mentions > 0
+
+
 def load_reddit_data(cursor):
     """Load Reddit posts data into database"""
     
@@ -158,11 +193,14 @@ def load_reddit_data(cursor):
     with open(data_path, 'r', encoding='utf-8') as f:
         posts = json.load(f)
     
-    print(f"📥 Loading {len(posts)} posts...")
+    # Filter for Notion-relevant posts only
+    relevant_posts = [post for post in posts if is_notion_relevant(post)]
+    
+    print(f"📥 Loading {len(relevant_posts)} Notion-relevant posts (filtered from {len(posts)} total)...")
     
     # Get subreddit IDs (insert if not exists)
     subreddit_map = {}
-    unique_subreddits = set(post['subreddit'] for post in posts)
+    unique_subreddits = set(post['subreddit'] for post in relevant_posts)
     
     for subreddit in unique_subreddits:
         cursor.execute(
@@ -185,7 +223,7 @@ def load_reddit_data(cursor):
     posts_inserted = 0
     comments_inserted = 0
     
-    for post in posts:
+    for post in relevant_posts:
         # Insert post
         cursor.execute('''
             INSERT OR REPLACE INTO posts 
