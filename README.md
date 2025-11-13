@@ -2,6 +2,21 @@
 
 A data science tool that analyzes Reddit posts to identify product improvement opportunities for Notion. Scrapes real user feedback via Reddit API, categorizes complaints, and designs A/B tests with statistical rigor.
 
+## 📊 Interactive Dashboard
+
+**Live monitoring of Notion complaints from Reddit**
+
+```bash
+streamlit run dashboard.py
+```
+
+Features:
+- Real-time filtering by date, subreddit, and category
+- Complaint volume trends and category breakdowns
+- Top posts by engagement (upvotes, comments)
+- Time series visualizations with Plotly
+- SQL-backed data with 323 relevant posts
+
 ## Overview
 
 **Current Dataset:**
@@ -16,22 +31,11 @@ A data science tool that analyzes Reddit posts to identify product improvement o
 
 ## Features
 
-### 📊 Interactive Dashboard
-- Real-time monitoring of complaint trends
-- Category breakdowns and time series visualizations
-- Filterable by subreddit, category, and date range
-- Top posts by engagement metrics
-
-**Run Dashboard:**
-```bash
-streamlit run dashboard.py
-```
-
 ### 🗄️ SQL Database
 - Relational schema with posts, comments, categories, subreddits
 - Indexed for fast queries
 - Demonstrates JOIN operations and SQL proficiency
-- 0.86 MB SQLite database
+- 0.81 MB SQLite database
 
 **Create Database:**
 ```bash
