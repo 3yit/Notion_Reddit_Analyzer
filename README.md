@@ -2,7 +2,7 @@
 
 A data science tool that analyzes Reddit posts to identify product improvement opportunities for Notion. Scrapes real user feedback via Reddit API, categorizes complaints, and designs A/B tests with statistical rigor.
 
-## 📊 Interactive Dashboard
+## Interactive Dashboard
 
 **Live monitoring of Notion complaints from Reddit**
 
@@ -31,7 +31,7 @@ Features:
 
 ## Features
 
-### 🗄️ SQL Database
+### SQL Database
 - Relational schema with posts, comments, categories, subreddits
 - Indexed for fast queries
 - Demonstrates JOIN operations and SQL proficiency
@@ -42,7 +42,7 @@ Features:
 python analysis/create_database.py
 ```
 
-### 📈 Time Series Analysis
+### Time Series Analysis
 - Trend detection using linear regression
 - Week-over-week growth rates
 - Category-specific trend analysis
