@@ -7,8 +7,14 @@
 **Method:** Reddit API via PRAW
 
 **Raw Data:** 347 posts scraped  
-**After Filtering:** 323 Notion-relevant posts (93.1%)  
-**Filtered Out:** 24 generic productivity posts (6.9%)
+**After Filtering:** 266 Notion-relevant posts (76.7%)  
+**Filtered Out:** 81 generic/off-topic posts (23.3%)
+
+**Filtering Criteria:**
+- Posts from r/Notion or r/NotionSo (always included)
+- "Notion" appears in the title
+- "Notion" mentioned 3+ times in post content
+- Posts with 1-2 mentions excluded (likely just passing references)
 
 ## Dataset Statistics
 
@@ -63,9 +69,9 @@ https://www.reddit.com/r/Notion/comments/1odxw00/
 ## Output Files
 
 1. **reddit_posts_raw.json** - All 347 scraped posts (before filtering)
-2. **reddit_posts_categorized.json** - 323 Notion-relevant posts organized by category
+2. **reddit_posts_categorized.json** - 266 Notion-relevant posts organized by category
 3. **reddit_analysis_report.md** - Formatted report with top 50 posts
-4. **notion_complaints.db** - SQLite database (0.86 MB)
+4. **notion_complaints.db** - SQLite database (0.73 MB, 266 posts)
 
 ## Data Quality
 

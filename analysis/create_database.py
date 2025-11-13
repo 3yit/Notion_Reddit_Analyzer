@@ -169,7 +169,7 @@ def is_notion_relevant(post):
     if notion_mentions >= 3:
         return True
     
-    # Exclude posts where Notion is just mentioned in a list
+    # Exclude posts where Notion is just mentioned in a list or in passing
     if notion_mentions <= 2:
         # Check if it's just in a list with other tools
         tool_list_patterns = [
@@ -177,11 +177,11 @@ def is_notion_relevant(post):
             'trello', 'evernote', 'onenote', 'clickup', 'asana'
         ]
         if any(pattern in combined_text for pattern in tool_list_patterns):
-            # Only include if Notion gets substantial discussion
-            if notion_mentions == 1 and len(combined_text) < 500:
-                return False
+            return False
     
-    return notion_mentions > 0
+    # If we get here with only 1-2 mentions and no tool list patterns, still exclude
+    # (post is likely just mentioning Notion in passing)
+    return False
 
 
 def load_reddit_data(cursor):

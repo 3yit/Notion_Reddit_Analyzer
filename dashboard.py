@@ -30,6 +30,7 @@ def load_data():
     conn = get_db_connection()
     
     # Load posts with category and subreddit info
+    # Use GROUP_CONCAT to get all categories for each post (avoiding duplicates)
     query = '''
         SELECT 
             p.post_id,
@@ -41,11 +42,13 @@ def load_data():
             p.selftext,
             p.url,
             s.name as subreddit,
-            c.name as category
+            GROUP_CONCAT(DISTINCT c.name) as category
         FROM posts p
         JOIN subreddits s ON p.subreddit_id = s.subreddit_id
         LEFT JOIN post_categories pc ON p.post_id = pc.post_id
         LEFT JOIN categories c ON pc.category_id = c.category_id
+        GROUP BY p.post_id, p.title, p.author, p.score, p.num_comments, 
+                 p.date, p.selftext, p.url, s.name
     '''
     
     df = pd.read_sql_query(query, conn)
@@ -79,7 +82,13 @@ def main():
     selected_subreddit = st.sidebar.selectbox("Subreddit", subreddits)
     
     # Category filter
-    categories = ['All'] + sorted(df['category'].dropna().unique().tolist())
+    # Get unique categories (they're now comma-separated, so we need to split)
+    all_categories = set()
+    for cats in df['category'].dropna():
+        if cats:
+            all_categories.update([c.strip() for c in cats.split(',')])
+    
+    categories = ['All'] + sorted(list(all_categories))
     selected_category = st.sidebar.selectbox("Category", categories)
     
     # Apply filters
@@ -95,7 +104,8 @@ def main():
         filtered_df = filtered_df[filtered_df['subreddit'] == selected_subreddit]
     
     if selected_category != 'All':
-        filtered_df = filtered_df[filtered_df['category'] == selected_category]
+        # Check if category is in the comma-separated list
+        filtered_df = filtered_df[filtered_df['category'].str.contains(selected_category, na=False)]
     
     # Key Metrics
     col1, col2, col3, col4 = st.columns(4)
@@ -134,7 +144,13 @@ def main():
     with col1:
         st.subheader("Complaints by Category")
         
-        category_counts = filtered_df['category'].value_counts().reset_index()
+        # Split comma-separated categories and count
+        category_list = []
+        for cats in filtered_df['category'].dropna():
+            if cats:
+                category_list.extend([c.strip() for c in cats.split(',')])
+        
+        category_counts = pd.Series(category_list).value_counts().reset_index()
         category_counts.columns = ['Category', 'Count']
         
         fig = px.pie(
@@ -201,18 +217,31 @@ def main():
     # Row 3: Category trends and engagement heatmap
     st.subheader("Category Trends Over Time")
     
-    # Pivot data for stacked area chart
-    category_daily = filtered_df.groupby([filtered_df['date'].dt.date, 'category']).size().reset_index()
-    category_daily.columns = ['Date', 'Category', 'Count']
+    # Expand categories for time series (each post contributes to all its categories)
+    expanded_rows = []
+    for _, row in filtered_df.iterrows():
+        if pd.notna(row['category']) and row['category']:
+            for cat in row['category'].split(','):
+                expanded_rows.append({
+                    'Date': row['date'].date(),
+                    'Category': cat.strip()
+                })
     
-    fig = px.area(
-        category_daily,
-        x='Date',
-        y='Count',
-        color='Category',
-        title='Complaint Categories Over Time (Stacked)'
-    )
-    st.plotly_chart(fig, use_container_width=True)
+    if expanded_rows:
+        category_daily = pd.DataFrame(expanded_rows)
+        category_daily = category_daily.groupby(['Date', 'Category']).size().reset_index()
+        category_daily.columns = ['Date', 'Category', 'Count']
+        
+        fig = px.area(
+            category_daily,
+            x='Date',
+            y='Count',
+            color='Category',
+            title='Complaint Categories Over Time (Stacked)'
+        )
+        st.plotly_chart(fig, use_container_width=True)
+    else:
+        st.info("No category data available for selected filters")
     
     # Most recent high-impact posts
     st.subheader("Recent High-Impact Posts (Score > 100)")
@@ -248,8 +277,8 @@ def main():
     st.markdown("""
     **Data Source:** Reddit API via PRAW  
     **Last Updated:** November 10, 2025  
-    **Total Dataset:** 323 Notion-relevant posts (93.1% of 347 scraped)  
-    **Note:** Generic productivity posts filtered out using relevance criteria  
+    **Total Dataset:** 266 Notion-relevant posts (76.7% of 347 scraped)  
+    **Filtering:** Posts must have "Notion" in title, be from r/Notion, OR mention Notion 3+ times  
     """)
 
 

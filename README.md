@@ -15,13 +15,13 @@ Features:
 - Complaint volume trends and category breakdowns
 - Top posts by engagement (upvotes, comments)
 - Time series visualizations with Plotly
-- SQL-backed data with 323 relevant posts
+- SQL-backed data with 266 highly relevant posts
 
 ## Overview
 
 **Current Dataset:**
-- 323 Notion-relevant posts from the past 30 days (93.1% of 347 scraped)
-- 24 generic productivity posts filtered out (6.9%)
+- 266 Notion-relevant posts from the past 30 days (76.7% of 347 scraped)
+- 81 generic/off-topic posts filtered out (23.3%)
 - Scraper can be configured for larger datasets (different time ranges, more subreddits)
 
 **Key Findings:**
@@ -188,15 +188,15 @@ A post is considered "about Notion" if it meets any of:
 - Reddit users may not represent all Notion users (skews toward power users)
 - Self-selection bias (users with strong opinions more likely to post)
 - Cannot establish causality without experimental data
-- Relevance filtering may exclude some edge cases where Notion is discussed indirectly
-- Dataset size (323 posts) limits statistical power for some analyses
+- Strict relevance filtering excludes posts mentioning Notion only 1-2 times
+- Dataset size (266 posts) limits statistical power for some analyses
 
 ## Output Files
 
 After running the scraper:
 
 1. **reddit_posts_raw.json** - All 347 scraped posts (before filtering)
-2. **reddit_posts_categorized.json** - 323 Notion-relevant posts organized by type
+2. **reddit_posts_categorized.json** - 266 Notion-relevant posts organized by type
 3. **reddit_analysis_report.md** - Formatted report with top 50 posts
 4. **notion_complaints.db** - SQLite database with relational schema
 
