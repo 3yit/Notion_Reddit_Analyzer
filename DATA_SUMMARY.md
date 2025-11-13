@@ -1,14 +1,12 @@
-# 📊 Actual Data Summary
+# Data Summary
 
-## Real Reddit Data Collected
+## Dataset Overview
 
 **Date Scraped:** November 10, 2025  
 **Time Period:** Last 30 days (October 11 - November 10, 2025)  
-**Method:** Reddit API via PRAW (official Python library)
+**Method:** Reddit API via PRAW
 
----
-
-## 📈 Dataset Statistics
+## Dataset Statistics
 
 ### Posts Collected
 - **Total Posts:** 347
@@ -35,7 +33,7 @@
 
 ---
 
-## 🏷️ Complaint Categories
+## Complaint Categories
 
 Automated categorization using keyword matching:
 
@@ -51,77 +49,35 @@ Automated categorization using keyword matching:
 | **Sync** | 4 | 1.2% |
 | **Offline** | 2 | 0.6% |
 
----
+## Top Posts by Engagement
 
-## 🔝 Top Posts by Engagement
+**Most Upvoted:**  
+"NOTION WILL BAN YOUR ACCOUNT FOR NO REASON AND KEEP YOUR DATA"  
+2,926 upvotes | 682 comments  
+https://www.reddit.com/r/Notion/comments/1odxw00/
 
-### Most Upvoted Post
-**Title:** "NOTION WILL BAN YOUR ACCOUNT FOR NO REASON AND KEEP YOUR DATA"  
-**Score:** 2,926 upvotes  
-**Comments:** 682  
-**Link:** https://www.reddit.com/r/Notion/comments/1odxw00/
+## Output Files
 
-### Most Discussed Post
-**Title:** Same as above (682 comments)
+1. **reddit_posts_raw.json** - All 347 posts with complete data
+2. **reddit_posts_categorized.json** - Posts organized by category
+3. **reddit_analysis_report.md** - Formatted report with top 50 posts
 
----
+## Data Quality
 
-## 📁 Output Files
+- 100% real data from Reddit API
+- Full source citations with clickable URLs
+- Verifiable and reproducible
+- No synthetic or mock data
 
-1. **`reddit_posts_raw.json`**
-   - 10,780 lines
-   - Full structured data for all 347 posts
-   - Includes all metadata, content, and comments
-
-2. **`reddit_posts_categorized.json`**
-   - Posts organized by complaint category
-   - Summary statistics included
-
-3. **`reddit_analysis_report.md`**
-   - 1,776 lines
-   - Human-readable report
-   - Top 50 posts with full content
-   - Clickable links to original posts
-
----
-
-## ✅ Data Quality
-
-- **100% Real Data** - Scraped from actual Reddit posts
-- **Full Citations** - Every post includes original URL
-- **Verifiable** - Anyone can click links to verify content
-- **Reproducible** - Run `./run_scraper.sh` to get fresh data
-- **API-Based** - Uses official Reddit API, not web scraping
-
----
-
-## 🔄 How to Update
-
-Run the scraper again to get fresh data:
+## Updating the Dataset
 
 ```bash
 ./run_scraper.sh
 ```
 
-Or run it manually:
+Or manually:
 
 ```bash
 cd analysis
-../.venv/bin/python reddit_scraper.py
+python reddit_scraper.py
 ```
-
-**Pro Tip:** Run weekly and combine results to build a larger dataset!
-
----
-
-## 📊 Use This Data For
-
-1. **Resume bullets** - "Analyzed 347 Reddit posts..."
-2. **Statistical analysis** - Real frequency distributions
-3. **A/B test designs** - Based on actual complaint volumes
-4. **Interview discussions** - Cite specific findings
-5. **Further research** - Build on this foundation
-
----
-
-**Last Updated:** November 10, 2025
